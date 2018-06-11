@@ -1,0 +1,8 @@
+/.tmp
+/.vscode
+/.idea
+.antlr
+/src/parser/*
+!/src/parser/*.g4
+node_modules
+**/.DS_Store

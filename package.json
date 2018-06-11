@@ -1,0 +1,28 @@
+{
+  "name": "jsx-quick-loader",
+  "version": "0.0.1",
+  "description": "Another webpack jsx loader",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/YuhangGe/jsx-loader.git"
+  },
+  "keywords": [
+    "jsx",
+    "webpack",
+    "loader"
+  ],
+  "author": "Yuhang Ge <abeyuhang@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/YuhangGe/jsx-loader/issues"
+  },
+  "homepage": "https://github.com/YuhangGe/jsx-loader#readme",
+  "devDependencies": {},
+  "dependencies": {
+    "antlr4": "^4.7.1"
+  }
+}

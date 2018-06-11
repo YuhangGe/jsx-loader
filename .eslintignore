@@ -1,0 +1,8 @@
+/.tmp
+/.vscode
+/.idea
+/node_modules
+.antlr
+JSXParser.js
+JSXLexer.js
+JSXListener.js
