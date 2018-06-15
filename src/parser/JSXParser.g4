@@ -4,50 +4,33 @@ options {
   tokenVocab = JSXLexer;
 }
 
-htmlDocument: (scriptlet | SEA_WS)* xml? (scriptlet | SEA_WS)* dtd? (
-    scriptlet
-    | SEA_WS
-  )* htmlElements*;
+jsx: block+;
 
-htmlElements: htmlMisc* htmlElement htmlMisc*;
+block: js
+  | htmlElement
+  | blockJsx
+  ;
 
+blockJsx: LP jsx RP;
+js: JS;
 htmlElement:
-  TAG_OPEN htmlTagName htmlAttribute* TAG_CLOSE htmlContent TAG_OPEN TAG_SLASH htmlTagName TAG_CLOSE
-  | TAG_OPEN htmlTagName htmlAttribute* TAG_SLASH_CLOSE
-  | TAG_OPEN htmlTagName htmlAttribute* TAG_CLOSE
-  | scriptlet
-  | script
-  | style;
+  (HTML_TAG_OPEN | TAG_OPEN) 
+    htmlAttributes TAG_CLOSE 
+    htmlContent HTML_CLOSE           #htmlWithChildren
+ | (HTML_TAG_OPEN | TAG_OPEN)
+    htmlAttributes 
+    TAG_SLASH_CLOSE                  #htmlNoChildren                        
+  ;
 
-htmlContent:
-  htmlChardata? (
-    (htmlElement | xhtmlCDATA | htmlComment) htmlChardata?
-  )*;
+htmlContent: htmlChardata? ((htmlContentJsx | htmlElement) htmlChardata?)*;
+htmlContentJsx: HTML_LP jsx RP;
+htmlChardata: HTML_WS | HTML_TEXT;
+
+htmlAttributes: htmlAttribute*;
 
 htmlAttribute:
-  htmlAttributeName TAG_EQUALS htmlAttributeValue
-  | htmlAttributeName;
-
-htmlAttributeName: TAG_NAME;
-
-htmlAttributeValue: ATTVALUE_VALUE;
-
-htmlTagName: TAG_NAME;
-
-htmlChardata: HTML_TEXT | SEA_WS;
-
-htmlMisc: htmlComment | SEA_WS;
-
-htmlComment: HTML_COMMENT | HTML_CONDITIONAL_COMMENT;
-
-xhtmlCDATA: CDATA;
-
-dtd: DTD;
-
-xml: XML_DECLARATION;
-
-scriptlet: SCRIPTLET;
-
-script: SCRIPT_OPEN ( SCRIPT_BODY | SCRIPT_SHORT_BODY);
-
-style: STYLE_OPEN ( STYLE_BODY | STYLE_SHORT_BODY);
+  TAG_NAME TAG_EQUALS (
+    TAG_VALUE | (TAG_LP jsx RP)
+  )
+  | TAG_NAME
+  ;

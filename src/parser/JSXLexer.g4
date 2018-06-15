@@ -1,52 +1,33 @@
 lexer grammar JSXLexer;
 
-HTML_COMMENT: '<!--' .*? '-->';
 
-HTML_CONDITIONAL_COMMENT: '<![' .*? ']>';
+TAG_OPEN: '<' [ \t]* TAG_NameStartChar TAG_NameChar* -> pushMode(HTML), pushMode(TAG);
+JS: ~[<{}]+;
+LP: '{' -> pushMode(DEFAULT_MODE);
+RP: '}' -> popMode;
 
-XML_DECLARATION: '<?xml' .*? '>';
+mode HTML;
 
-CDATA: '<![CDATA[' .*? ']]>';
+HTML_TAG_OPEN: '<' [ \t]* TAG_NameStartChar TAG_NameChar* -> pushMode(HTML), pushMode(TAG);
+HTML_CLOSE: '<' [ \t]* '/' [ \t]* TAG_NameStartChar TAG_NameChar* [ \t]* '>' -> popMode;
+HTML_LP: '{' -> pushMode(DEFAULT_MODE);
+HTML_WS: (' ' | '\t' | '\r'? '\n')+;
+HTML_TEXT: ~[<{]+;
 
-DTD: '<!' .*? '>';
-
-SCRIPTLET: '<?' .*? '?>' | '<%' .*? '%>';
-
-SEA_WS: (' ' | '\t' | '\r'? '\n')+;
-
-SCRIPT_OPEN: '<script' .*? '>' -> pushMode(SCRIPT);
-
-STYLE_OPEN: '<style' .*? '>' -> pushMode(STYLE);
-
-TAG_OPEN: '<' -> pushMode(TAG);
-
-HTML_TEXT: ~'<'+;
-
-//
-// tag declarations
-// 
-//
-// 
-//
 mode TAG;
 
 TAG_CLOSE: '>' -> popMode;
-
-TAG_SLASH_CLOSE: '/>' -> popMode;
-
-TAG_SLASH: '/';
-
-//
-// lexing mode for attribute values
-// 
-//
-// 
-//
-TAG_EQUALS: '=' -> pushMode(ATTVALUE);
-
+TAG_SLASH_CLOSE: '/' [ \t]* '>' -> popMode, popMode;
+TAG_EQUALS: '=';
 TAG_NAME: TAG_NameStartChar TAG_NameChar*;
-
+TAG_VALUE: DOUBLE_QUOTE_STRING | SINGLE_QUOTE_STRING;
+TAG_LP: '{' -> pushMode(DEFAULT_MODE);
 TAG_WHITESPACE: [ \t\r\n] -> skip;
+
+
+fragment DOUBLE_QUOTE_STRING: '"' ~[<"]* '"';
+
+fragment SINGLE_QUOTE_STRING: '\'' ~[<']* '\'';
 
 fragment HEXDIGIT: [a-fA-F0-9];
 
@@ -69,69 +50,3 @@ fragment TAG_NameStartChar:
   | '\u3001' ..'\uD7FF'
   | '\uF900' ..'\uFDCF'
   | '\uFDF0' ..'\uFFFD';
-
-//
-// <scripts>
-// 
-//
-// 
-//
-mode SCRIPT;
-
-SCRIPT_BODY: .*? '</script>' -> popMode;
-
-SCRIPT_SHORT_BODY: .*? '</>' -> popMode;
-
-//
-// <styles>
-// 
-//
-// 
-//
-mode STYLE;
-
-STYLE_BODY: .*? '</style>' -> popMode;
-
-STYLE_SHORT_BODY: .*? '</>' -> popMode;
-
-//
-// attribute values
-// 
-//
-// 
-//
-mode ATTVALUE;
-
-// an attribute value may have spaces b/t the '=' and the value
-ATTVALUE_VALUE: [ ]* ATTRIBUTE -> popMode;
-
-ATTRIBUTE:
-  DOUBLE_QUOTE_STRING
-  | SINGLE_QUOTE_STRING
-  | ATTCHARS
-  | HEXCHARS
-  | DECCHARS;
-
-fragment ATTCHAR:
-  '-'
-  | '_'
-  | '.'
-  | '/'
-  | '+'
-  | ','
-  | '?'
-  | '='
-  | ':'
-  | ';'
-  | '#'
-  | [0-9a-zA-Z];
-
-fragment ATTCHARS: ATTCHAR+ ' '?;
-
-fragment HEXCHARS: '#' [0-9a-fA-F]+;
-
-fragment DECCHARS: [0-9]+ '%'?;
-
-fragment DOUBLE_QUOTE_STRING: '"' ~[<"]* '"';
-
-fragment SINGLE_QUOTE_STRING: '\'' ~[<']* '\'';
