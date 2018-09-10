@@ -2,3 +2,6 @@ node_modules
 /.tmp
 /.vscode
 /.idea
+.antlr
+/src/parser/*
+!/src/parser/*.js
