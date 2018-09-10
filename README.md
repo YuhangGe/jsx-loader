@@ -1,6 +1,6 @@
 # jsx-quick-loader
 
-> Another webpack jsx loader only transform jsx grammar to React.createElement.
+> Webpack jsx loader only transform jsx grammar to React.createElement.
 
 ## Install
 
